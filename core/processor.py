@@ -9,7 +9,7 @@ def process_documents(uploaded_files):
     documents = []
     
     for file in uploaded_files:
-        # Guardar archivo temporalmente para el Loader de LangChain
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             tmp.write(file.read())
             tmp_path = tmp.name
@@ -18,11 +18,11 @@ def process_documents(uploaded_files):
             loader = PyPDFLoader(tmp_path)
             documents.extend(loader.load())
         finally:
-            # Eliminar archivo temporal
+
             if os.path.exists(tmp_path):
                 os.remove(tmp_path)
     
-    # Dividir en fragmentos
+
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP
