@@ -4,12 +4,12 @@ from core.vector_store import get_vector_store
 from core.engine import get_rag_chain
 from core.config import RETRIEVER_K
 
-# Configuración de la página
+
 st.set_page_config(page_title="Chat con documentos (RAG)", page_icon="📄", layout="wide")
 st.title("📄 Chat con documentos (RAG)")
 st.markdown("---")
 
-# --------- INICIALIZAR SESSION STATE ----------
+# --------- SESSION STATE ----------
 if "vectorstore" not in st.session_state:
     st.session_state.vectorstore = None
 if "retriever" not in st.session_state:
@@ -19,7 +19,7 @@ if "processed_files" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --------- BARRA LATERAL (Subida de archivos) ----------
+# --------- BARRA LATERAL ----------
 with st.sidebar:
     st.header("Configuración")
     uploaded_files = st.file_uploader(
@@ -32,11 +32,11 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# --------- PROCESAR DOCUMENTOS ----------
+# --------- PROCESAR DOCUMENTO ----------
 if uploaded_files:
     current_files = [file.name for file in uploaded_files]
     
-    # Solo procesar si hay cambios en los archivos
+
     if current_files != st.session_state.processed_files:
         with st.status("Procesando documentos...", expanded=True) as status:
             st.write("📄 Cargando y dividiendo PDFs...")
@@ -52,29 +52,29 @@ if uploaded_files:
             status.update(label="✅ Documentos procesados con éxito!", state="complete", expanded=False)
             st.success(f"Se procesaron {len(documents)} páginas y se crearon {len(chunks)} fragmentos.")
 else:
-    # Limpiar estado si no hay archivos
+
     st.session_state.vectorstore = None
     st.session_state.retriever = None
     st.session_state.processed_files = []
 
 # --------- INTERFAZ DE CHAT ----------
 
-# Mostrar historial de mensajes
+
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Input de usuario
+
 if pregunta := st.chat_input("Haz una pregunta sobre los documentos"):
     if not st.session_state.retriever:
         st.warning("⚠️ Primero debes subir al menos un documento PDF.")
     else:
-        # Añadir mensaje de usuario al historial
+
         st.session_state.messages.append({"role": "user", "content": pregunta})
         with st.chat_message("user"):
             st.markdown(pregunta)
 
-        # Generar respuesta
+     
         with st.chat_message("assistant"):
             placeholder = st.empty()
             full_response = ""
